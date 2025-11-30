@@ -1804,6 +1804,21 @@ function library:AddWindow(title, options)
 
 							return object, object_data
 						end
+						function dropdown_data:Remove(item_text)
+							local item_to_remove = objects:FindFirstChild(item_text)
+
+							if item_to_remove then
+								item_to_remove:Destroy()
+								if dropdown_data.currentSelection == item_text then
+									local first_item = objects:GetChildren()[1]
+									local new_selection = (first_item and first_item.Text) or "No Selection"
+
+									dropdown_data.currentSelection = new_selection
+									dropdown.Text = "        [ " .. new_selection .. " ]"
+									pcall(callback, new_selection)
+								end
+							end
+						end
 
 						return dropdown_data, dropdown
 					end
@@ -1891,18 +1906,14 @@ function library:AddWindow(title, options)
 											h = x / 100
 											s = y / 100
 
-											Resize(
-												palette_indicator,
-												{
-													Position = UDim2.new(
-														0,
-														math.abs(x - 100) - (palette_indicator.AbsoluteSize.X / 2),
-														0,
-														math.abs(y - 100) - (palette_indicator.AbsoluteSize.Y / 2)
-													),
-												},
-												options.tween_time
-											)
+											Resize(palette_indicator, {
+												Position = UDim2.new(
+													0,
+													math.abs(x - 100) - (palette_indicator.AbsoluteSize.X / 2),
+													0,
+													math.abs(y - 100) - (palette_indicator.AbsoluteSize.Y / 2)
+												),
+											}, options.tween_time)
 
 											update()
 											RS.Heartbeat:Wait()
